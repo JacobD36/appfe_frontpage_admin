@@ -1,0 +1,111 @@
+/* Table customizations */
+.mat-mdc-table {
+    .mat-mdc-header-row {
+        .mat-mdc-header-cell {
+            border-bottom: none;
+            font-weight: 600;
+            color: var(--fuse-text-secondary);
+            background-color: transparent;
+
+            .dark & {
+                background-color: transparent;
+            }
+        }
+    }
+
+    .mat-mdc-row {
+        .mat-mdc-cell {
+            border-bottom: 1px solid var(--fuse-border);
+
+            &:first-child {
+                padding-left: 24px;
+            }
+
+            &:last-child {
+                padding-right: 24px;
+            }
+        }
+
+        &:hover {
+            .mat-mdc-cell {
+                background-color: var(--fuse-bg-hover);
+            }
+        }
+
+        &:last-child {
+            .mat-mdc-cell {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+/* Chip customizations */
+.mat-mdc-chip-set {
+    .mat-mdc-chip {
+        &.role-admin {
+            @apply bg-amber-100 text-amber-800;
+
+            .dark & {
+                @apply bg-amber-800 text-amber-100;
+            }
+        }
+
+        &.role-user {
+            @apply bg-blue-100 text-blue-800;
+
+            .dark & {
+                @apply bg-blue-800 text-blue-100;
+            }
+        }
+    }
+}
+
+/* Avatar circle */
+.user-avatar {
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+/* Action buttons */
+.action-buttons {
+    .mat-mdc-icon-button {
+        .mat-icon {
+            transition: color 0.2s ease;
+        }
+
+        &:hover {
+            .mat-icon {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+/* Pagination customizations */
+.mat-mdc-paginator {
+    border: none;
+    background: transparent;
+
+    .mat-mdc-paginator-container {
+        padding: 16px 24px;
+        min-height: 64px;
+    }
+
+    .mat-mdc-paginator-range-label {
+        color: var(--fuse-text-secondary);
+        font-size: 14px;
+    }
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+
+    .mat-icon {
+        opacity: 0.3;
+    }
+}

@@ -1,0 +1,69 @@
+/* Estilos personalizados para los modales de gestión de usuarios */
+
+/* Estilos para chips de rol */
+.role-admin {
+    @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200;
+}
+
+.role-user {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
+}
+
+/* Estilos para chips de estado */
+.status-active {
+    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+}
+
+.status-inactive {
+    @apply bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200;
+}
+
+/* Mejoras para los modales */
+.mat-mdc-dialog-container {
+    --mdc-dialog-supporting-text-color: rgb(var(--fuse-text-secondary-rgb));
+    --mdc-dialog-subhead-color: rgb(var(--fuse-text-default-rgb));
+}
+
+/* Espaciado mejorado para formularios en modales */
+.dialog-form .mat-mdc-form-field {
+    @apply mb-4;
+}
+
+.dialog-form .mat-mdc-form-field:last-of-type {
+    @apply mb-6;
+}
+
+/* Botones de acción en modales */
+.dialog-actions {
+    @apply flex items-center justify-end space-x-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700;
+}
+
+/* Ajustes específicos para el modal de usuario */
+.user-dialog-container {
+    min-height: 400px;
+    max-height: 80vh;
+}
+
+.user-details-container {
+    min-height: 500px;
+    max-height: 80vh;
+}
+
+.confirm-dialog-container {
+    min-height: 200px;
+    max-height: 60vh;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .mat-mdc-dialog-container {
+        margin: 16px;
+        max-width: calc(100vw - 32px);
+        max-height: calc(100vh - 32px);
+    }
+
+    .user-dialog-container,
+    .user-details-container {
+        max-height: calc(100vh - 64px);
+    }
+}

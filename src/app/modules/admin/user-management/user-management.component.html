@@ -15,7 +15,8 @@
             <button
                 class="ml-4"
                 mat-flat-button
-                [color]="'primary'">
+                [color]="'primary'"
+                (click)="createUser()">
                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                 <span class="ml-2">Agregar Usuario</span>
             </button>
@@ -24,10 +25,28 @@
 
     <!-- Main -->
     <div class="flex-auto p-6 sm:p-10">
+        <!-- Barra de búsqueda -->
+        <div class="mb-6">
+            <mat-form-field class="w-full max-w-80" appearance="outline">
+                <mat-label>Buscar usuarios</mat-label>
+                <input
+                    matInput
+                    placeholder="Nombre o email..."
+                    [value]="searchTerm"
+                    (input)="onSearch($event)">
+                <mat-icon matSuffix [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+            </mat-form-field>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
         <!-- Tabla -->
-        <div class="bg-card shadow rounded-2xl overflow-hidden">
+        <div *ngIf="!isLoading && users && users.length > 0" class="bg-card shadow rounded-2xl overflow-hidden">
             <div class="overflow-x-auto">
-                <table mat-table [dataSource]="paginatedUsers" class="w-full bg-transparent">
+                <table mat-table [dataSource]="users" class="w-full bg-transparent">
 
                     <!-- Columna ID -->
                     <ng-container matColumnDef="id">
@@ -36,7 +55,7 @@
                         </th>
                         <td mat-cell *matCellDef="let user" class="border-t">
                             <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                #{{ user.id.toString().padStart(3, '0') }}
+                                {{ user.id.slice(-8) }}
                             </div>
                         </td>
                     </ng-container>
@@ -49,15 +68,21 @@
                         <td mat-cell *matCellDef="let user" class="border-t">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="user-avatar h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center">
-                                        <span class="text-sm font-medium text-primary dark:text-primary-400">
-                                            {{ getInitials(user.nombre) }}
-                                        </span>
-                                    </div>
+                                    <img *ngIf="user.img; else avatarTemplate"
+                                         [src]="user.img"
+                                         [alt]="user.name"
+                                         class="h-10 w-10 rounded-full object-cover">
+                                    <ng-template #avatarTemplate>
+                                        <div class="user-avatar h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-800 flex items-center justify-center">
+                                            <span class="text-sm font-medium text-primary dark:text-primary-400">
+                                                {{ getInitials(user.name) }}
+                                            </span>
+                                        </div>
+                                    </ng-template>
                                 </div>
                                 <div class="ml-4">
                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                        {{ user.nombre }}
+                                        {{ user.name }}
                                     </div>
                                 </div>
                             </div>
@@ -73,6 +98,9 @@
                             <div class="text-sm text-gray-500 dark:text-gray-400">
                                 {{ user.email }}
                             </div>
+                            <div *ngIf="!user.emailValidated" class="text-xs text-red-500">
+                                Email no verificado
+                            </div>
                         </td>
                     </ng-container>
 
@@ -82,13 +110,21 @@
                             <div class="font-semibold text-secondary">Rol</div>
                         </th>
                         <td mat-cell *matCellDef="let user" class="border-t">
-                            <mat-chip-set>
-                                <mat-chip
-                                    [class]="getRoleClass(user.rol)"
-                                    class="text-xs font-medium">
-                                    {{ getRoleText(user.rol) }}
-                                </mat-chip>
-                            </mat-chip-set>
+                            <mat-chip class="text-xs" [ngClass]="getRoleClass(user.role)">
+                                {{ getRoleText(user.role) }}
+                            </mat-chip>
+                        </td>
+                    </ng-container>
+
+                    <!-- Columna Estado -->
+                    <ng-container matColumnDef="status">
+                        <th mat-header-cell *matHeaderCellDef class="bg-gray-50 dark:bg-slate-700">
+                            <div class="font-semibold text-secondary">Estado</div>
+                        </th>
+                        <td mat-cell *matCellDef="let user" class="border-t">
+                            <mat-chip class="text-xs" [ngClass]="getStatusClass(user.status)">
+                                {{ getStatusText(user.status) }}
+                            </mat-chip>
                         </td>
                     </ng-container>
 
@@ -154,7 +190,7 @@
         </div>
 
         <!-- Estado vacío (si no hay datos en el futuro) -->
-        @if (users.length === 0) {
+        @if (!isLoading && users && users.length === 0) {
             <div class="flex flex-col items-center justify-center py-16">
                 <mat-icon
                     [svgIcon]="'heroicons_outline:users'"

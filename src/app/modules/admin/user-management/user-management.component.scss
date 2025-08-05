@@ -1,0 +1,133 @@
+/* Table customizations */
+.mat-mdc-table {
+    .mat-mdc-header-row {
+        .mat-mdc-header-cell {
+            border-bottom: none;
+            font-weight: 600;
+            color: var(--fuse-text-secondary);
+            background-color: transparent;
+
+            .dark & {
+                background-color: transparent;
+            }
+        }
+    }
+
+    .mat-mdc-row {
+        .mat-mdc-cell {
+            border-bottom: 1px solid var(--fuse-border);
+
+            &:first-child {
+                padding-left: 24px;
+            }
+
+            &:last-child {
+                padding-right: 24px;
+            }
+        }
+
+        &:hover {
+            .mat-mdc-cell {
+                background-color: var(--fuse-bg-hover);
+            }
+        }
+
+        &:last-child {
+            .mat-mdc-cell {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+/* Chip customizations */
+.role-admin {
+    background-color: rgb(254 243 199) !important;
+    color: rgb(146 64 14) !important;
+
+    .dark & {
+        background-color: rgb(146 64 14) !important;
+        color: rgb(254 243 199) !important;
+    }
+}
+
+.role-user {
+    background-color: rgb(219 234 254) !important;
+    color: rgb(30 64 175) !important;
+
+    .dark & {
+        background-color: rgb(30 64 175) !important;
+        color: rgb(219 234 254) !important;
+    }
+}
+
+.status-active {
+    background-color: rgb(220 252 231) !important;
+    color: rgb(22 101 52) !important;
+
+    .dark & {
+        background-color: rgb(22 101 52) !important;
+        color: rgb(220 252 231) !important;
+    }
+}
+
+.status-inactive {
+    background-color: rgb(254 226 226) !important;
+    color: rgb(153 27 27) !important;
+
+    .dark & {
+        background-color: rgb(153 27 27) !important;
+        color: rgb(254 226 226) !important;
+    }
+}
+
+/* Avatar circle */
+.user-avatar {
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+/* Action buttons */
+.action-buttons {
+    .mat-mdc-icon-button {
+        .mat-icon {
+            transition: color 0.2s ease;
+        }
+
+        &:hover {
+            .mat-icon {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+/* Loading spinner */
+.mat-mdc-progress-spinner {
+    margin: 0 auto;
+}
+
+/* Snackbar customizations */
+.success-snackbar {
+    background-color: rgb(22 163 74) !important;
+    color: white !important;
+}
+
+.error-snackbar {
+    background-color: rgb(239 68 68) !important;
+    color: white !important;
+}
+
+/* Pagination */
+.mat-mdc-paginator {
+    .mat-mdc-paginator-range-label {
+        color: var(--fuse-text-secondary);
+    }
+
+    .mat-mdc-paginator-container {
+        padding: 12px 16px;
+    }
+}
