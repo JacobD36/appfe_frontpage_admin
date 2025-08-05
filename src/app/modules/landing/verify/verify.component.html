@@ -1,0 +1,27 @@
+<div class="flex h-full w-full flex-col items-center justify-center">
+    <div class="w-full max-w-3xl">
+        <div class="prose prose-sm mx-auto max-w-none">
+            <img class="w-20" src="images/logo/geekway_logo.png" alt="Logo image" />
+            <h1>Correo electrónico validado</h1>
+            <p>
+                Tu correo electrónico ha sido validado correctamente.
+                Gracias por completar este paso. Ahora puedes acceder a todas las funcionalidades de nuestra aplicación.
+                Haz clic en el botón a continuación para comenzar a explorar GeekWay PlayGround.
+            </p>
+        </div>
+        <div>
+            <a
+                class="mt-8"
+                mat-flat-button
+                [color]="'primary'"
+                [routerLink]="['/sign-in']"
+            >
+                <span>Ir a Iniciar Sesión</span>
+                <mat-icon
+                    class="ml-2 icon-size-5"
+                    [svgIcon]="'heroicons_mini:arrow-long-right'"
+                ></mat-icon>
+            </a>
+        </div>
+    </div>
+</div>
