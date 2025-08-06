@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -25,8 +26,10 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
     selector: 'classy-layout',
     templateUrl: './classy.component.html',
+    styleUrls: ['./classy.component.scss'],
     encapsulation: ViewEncapsulation.None,
     imports: [
+        CommonModule,
         FuseLoadingBarComponent,
         FuseVerticalNavigationComponent,
         NotificationsComponent,
@@ -46,6 +49,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
     isScreenSmall: boolean;
     navigation: Navigation;
     user: User;
+    isNavigationOpened: boolean = true;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -99,7 +103,35 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
             .subscribe(({ matchingAliases }) => {
                 // Check if the screen is small
                 this.isScreenSmall = !matchingAliases.includes('md');
+
+                // If screen becomes small, navigation should be closed
+                if (this.isScreenSmall) {
+                    this.isNavigationOpened = false;
+                } else {
+                    // On larger screens, navigation should be open by default
+                    this.isNavigationOpened = true;
+                }
             });
+    }
+
+    /**
+     * Get the current sidebar state for CSS classes
+     */
+    get isSidebarVisible(): boolean {
+        return !this.isScreenSmall && this.isNavigationOpened;
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Handle navigation opened state change
+     *
+     * @param opened
+     */
+    onNavigationOpenedChanged(opened: boolean): void {
+        this.isNavigationOpened = opened;
     }
 
     /**
@@ -129,6 +161,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy {
 
         if (navigation) {
             // Toggle the opened status
+            // The state will be updated automatically through the openedChanged event
             navigation.toggle();
         }
     }

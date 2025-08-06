@@ -121,6 +121,11 @@
     color: white !important;
 }
 
+.warn-snackbar {
+    background-color: rgb(245 158 11) !important;
+    color: white !important;
+}
+
 /* Pagination */
 .mat-mdc-paginator {
     .mat-mdc-paginator-range-label {
@@ -129,5 +134,26 @@
 
     .mat-mdc-paginator-container {
         padding: 12px 16px;
+    }
+}
+
+/* Protected admin user styles */
+.action-buttons {
+    button[disabled] {
+        cursor: not-allowed !important;
+        pointer-events: none;
+
+        .mat-icon {
+            transition: none !important;
+        }
+
+        &:hover {
+            background-color: transparent !important;
+
+            .mat-icon {
+                transform: none !important;
+                color: rgb(209 213 219) !important;
+            }
+        }
     }
 }

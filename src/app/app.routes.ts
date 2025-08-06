@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
+import { AdminGuard } from 'app/core/auth/guards/admin.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
@@ -9,15 +10,15 @@ import { LayoutComponent } from 'app/layout/layout.component';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
 
-    // Redirect empty path to '/user'
-    {path: '', pathMatch : 'full', redirectTo: 'user'},
+    // Redirect empty path to '/dashboard'
+    {path: '', pathMatch : 'full', redirectTo: 'dashboard'},
 
-    // Redirect signed-in user to the '/user'
+    // Redirect signed-in user to the '/dashboard'
     //
     // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
     // path. Below is another redirection for that path to redirect the user to the desired
     // location. This is a small convenience to keep all main routes together here on this file.
-    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'user'},
+    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'dashboard'},
 
     // Auth routes for guests
     {
@@ -74,12 +75,17 @@ export const appRoutes: Route[] = [
             initialData: initialDataResolver
         },
         children: [
-            {path: 'user', loadChildren: () => import('app/modules/admin/user-management/user-management.routes')},
+            {path: 'dashboard', loadChildren: () => import('app/modules/admin/dashboard/dashboard.routes')},
+            {
+                path: 'user',
+                canActivate: [AdminGuard],
+                loadChildren: () => import('app/modules/admin/user-management/user-management.routes')
+            },
         ]
     },
     // Wildcard route to catch all undefined routes
     {
         path: '**',
-        redirectTo: 'user'
+        redirectTo: 'dashboard'
     }
 ];

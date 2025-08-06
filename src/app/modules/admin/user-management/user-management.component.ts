@@ -105,9 +105,11 @@ export class UserManagementComponent implements OnInit, OnDestroy
         this._userManagementService.pagination$
             .pipe(takeUntil(this._unsubscribe$))
             .subscribe(pagination => {
+                console.log('Component received pagination:', pagination); // Debug log
                 this.totalUsers = pagination.total;
                 this.pageIndex = pagination.page - 1; // API usa 1-based, Material usa 0-based
                 this.pageSize = pagination.limit;
+                console.log('Component pageIndex:', this.pageIndex, 'totalUsers:', this.totalUsers, 'pageSize:', this.pageSize); // Debug log
             });
 
         // Cargar usuarios iniciales
@@ -135,7 +137,8 @@ export class UserManagementComponent implements OnInit, OnDestroy
         ).subscribe({
             error: (error) => {
                 console.error('Error cargando usuarios:', error);
-                this._snackBar.open('Error al cargar usuarios', 'Cerrar', {
+                const errorMessage = error.message || 'Error al cargar usuarios';
+                this._snackBar.open(errorMessage, 'Cerrar', {
                     duration: 3000,
                     panelClass: ['error-snackbar']
                 });
@@ -213,6 +216,15 @@ export class UserManagementComponent implements OnInit, OnDestroy
     }
 
     /**
+     * Verificar si un usuario es el administrador principal que no se puede editar/eliminar
+     */
+    isProtectedAdminUser(user: UserData): boolean
+    {
+        // Verificar que sea el usuario "administrador" y tenga rol de administrador
+        return user.name.toLowerCase() === 'administrador' && user.role === 'ADMIN_ROLE';
+    }
+
+    /**
      * Acciones de la tabla
      */
     viewUser(user: UserData): void
@@ -234,8 +246,8 @@ export class UserManagementComponent implements OnInit, OnDestroy
                 });
             },
             error: (error) => {
-                console.error('Error obteniendo usuario:', error);
-                this._snackBar.open('Error al obtener detalles del usuario', 'Cerrar', {
+                const errorMessage = error.message || 'Error al obtener detalles del usuario';
+                this._snackBar.open(errorMessage, 'Cerrar', {
                     duration: 3000,
                     panelClass: ['error-snackbar']
                 });
@@ -245,6 +257,15 @@ export class UserManagementComponent implements OnInit, OnDestroy
 
     editUser(user: UserData): void
     {
+        // Verificar si es un usuario protegido
+        if (this.isProtectedAdminUser(user)) {
+            this._snackBar.open('El usuario administrador no se puede editar', 'Cerrar', {
+                duration: 3000,
+                panelClass: ['warn-snackbar']
+            });
+            return;
+        }
+
         const dialogRef = this._dialog.open(UserDialogComponent, {
             width: '450px',
             maxWidth: '90vw',
@@ -268,8 +289,8 @@ export class UserManagementComponent implements OnInit, OnDestroy
                         this.loadUsers(); // Recargar la lista
                     },
                     error: (error) => {
-                        console.error('Error actualizando usuario:', error);
-                        this._snackBar.open('Error al actualizar usuario', 'Cerrar', {
+                        const errorMessage = error.message || 'Error al actualizar usuario';
+                        this._snackBar.open(errorMessage, 'Cerrar', {
                             duration: 3000,
                             panelClass: ['error-snackbar']
                         });
@@ -281,15 +302,24 @@ export class UserManagementComponent implements OnInit, OnDestroy
 
     deleteUser(user: UserData): void
     {
+        // Verificar si es un usuario protegido
+        if (this.isProtectedAdminUser(user)) {
+            this._snackBar.open('El usuario administrador no se puede eliminar', 'Cerrar', {
+                duration: 3000,
+                panelClass: ['warn-snackbar']
+            });
+            return;
+        }
+
         const dialogRef = this._dialog.open(ConfirmDialogComponent, {
             width: '400px',
             maxWidth: '90vw',
             maxHeight: '60vh',
             panelClass: 'confirm-dialog-container',
             data: {
-                title: 'Eliminar Usuario',
-                message: `¿Estás seguro de que quieres eliminar al usuario "${user.name}"? Esta acción no se puede deshacer.`,
-                confirmText: 'Eliminar',
+                title: 'Inactivar Usuario',
+                message: `¿Estás seguro de que quieres inactivar al usuario "${user.name}"? El usuario ya no podrá autenticarse.`,
+                confirmText: 'Inactivar',
                 cancelText: 'Cancelar',
                 color: 'warn'
             } as ConfirmDialogData
@@ -306,8 +336,8 @@ export class UserManagementComponent implements OnInit, OnDestroy
                         this.loadUsers(); // Recargar la lista
                     },
                     error: (error) => {
-                        console.error('Error eliminando usuario:', error);
-                        this._snackBar.open('Error al eliminar usuario', 'Cerrar', {
+                        const errorMessage = error.message || 'Error al eliminar usuario';
+                        this._snackBar.open(errorMessage, 'Cerrar', {
                             duration: 3000,
                             panelClass: ['error-snackbar']
                         });
@@ -344,8 +374,8 @@ export class UserManagementComponent implements OnInit, OnDestroy
                         this.loadUsers(); // Recargar la lista
                     },
                     error: (error) => {
-                        console.error('Error creando usuario:', error);
-                        this._snackBar.open('Error al crear usuario', 'Cerrar', {
+                        const errorMessage = error.message || 'Error al crear usuario';
+                        this._snackBar.open(errorMessage, 'Cerrar', {
                             duration: 3000,
                             panelClass: ['error-snackbar']
                         });

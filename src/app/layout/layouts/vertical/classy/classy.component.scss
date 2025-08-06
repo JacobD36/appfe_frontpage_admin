@@ -1,0 +1,58 @@
+/* Fixed header and footer styles */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 250; /* Higher than sidebar (z-index: 200) */
+    transition: left 0.3s ease, width 0.3s ease;
+
+    &.with-sidebar {
+        left: 280px; /* Start after sidebar */
+        width: calc(100% - 280px); /* Take remaining width */
+    }
+
+    &.without-sidebar {
+        left: 0;
+        width: 100%;
+    }
+}
+
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 250; /* Higher than sidebar (z-index: 200) */
+    transition: left 0.3s ease, width 0.3s ease;
+
+    &.with-sidebar {
+        left: 280px; /* Start after sidebar */
+        width: calc(100% - 280px); /* Take remaining width */
+    }
+
+    &.without-sidebar {
+        left: 0;
+        width: 100%;
+    }
+}
+
+.content-with-fixed-header-footer {
+    padding-top: 4rem; /* 64px - height of header */
+    padding-bottom: 3.5rem; /* 56px - height of footer */
+    min-height: calc(100vh - 7.5rem);
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+    .fixed-header,
+    .fixed-footer {
+        left: 0 !important;
+    }
+}
+
+/* Dark mode adjustments */
+.dark {
+    .fixed-header,
+    .fixed-footer {
+        border-color: rgba(255, 255, 255, 0.12);
+    }
+}

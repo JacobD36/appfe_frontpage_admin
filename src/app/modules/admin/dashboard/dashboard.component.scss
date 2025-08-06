@@ -1,0 +1,126 @@
+/* Stats cards */
+.stats-card {
+    .mat-mdc-card-content {
+        padding: 24px !important;
+
+        &:last-child {
+            padding-bottom: 24px !important;
+        }
+    }
+
+    .mat-mdc-card-header {
+        .mat-mdc-card-title {
+            margin-bottom: 0;
+        }
+    }
+
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Chart customizations */
+.apx-chart {
+    .apexcharts-legend {
+        display: none !important;
+    }
+}
+
+/* Card headers */
+.mat-mdc-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    .mat-mdc-card-title {
+        flex: 1;
+        margin: 0;
+    }
+}
+
+/* Task items */
+.task-item {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: var(--fuse-bg-hover);
+    }
+}
+
+/* Schedule items */
+.schedule-item {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: var(--fuse-bg-hover);
+    }
+}
+
+/* Status chips */
+.status-chip {
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+/* Tabs customization */
+.mat-mdc-tab-group {
+    .mat-mdc-tab-header {
+        border: none;
+    }
+
+    .mat-mdc-tab {
+        min-width: auto;
+        padding: 0 12px;
+
+        .mdc-tab__text-label {
+            font-size: 0.875rem;
+        }
+    }
+}
+
+/* Grid responsive */
+@media (max-width: 640px) {
+    .grid {
+        &.grid-cols-4 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        &.grid-cols-2 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+    }
+}
+
+/* Loading states */
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+/* Dark mode adjustments */
+.dark {
+    .stats-card {
+        &:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    .loading-skeleton {
+        background: linear-gradient(90deg, #2a2a2a 25%, transparent 37%, #2a2a2a 63%);
+        background-size: 400% 100%;
+    }
+}

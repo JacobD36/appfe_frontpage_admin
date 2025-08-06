@@ -157,11 +157,9 @@ export class UserManagementService {
             .pipe(
                 tap((response) => {
                     console.log('API Response:', response); // Debug log
-                    console.log('Response data items:', response.data?.data); // Debug log
                     console.log('Response data pagination:', response.data?.pagination); // Debug log
 
                     this._users.next(response.data?.data || []);
-                    // Conservar el término de búsqueda en la paginación
                     const paginationData = response.data?.pagination || {
                         page: 1,
                         limit: 10,
@@ -170,6 +168,9 @@ export class UserManagementService {
                         has_previous: false,
                         has_next: false
                     };
+
+                    console.log('Pagination data before setting:', paginationData); // Debug log
+
                     this._pagination.next({
                         ...paginationData,
                         search: search
@@ -177,20 +178,7 @@ export class UserManagementService {
                     this._loading.next(false);
                 }),
                 catchError((error) => {
-                    console.error('Error loading users:', error);
-                    console.error('Error status:', error.status);
-                    console.error('Error message:', error.message);
-                    console.error('Full error:', error);
-
-                    let errorMessage = 'Error al cargar usuarios';
-
-                    if (error.status === 401) {
-                        errorMessage = 'Token de autorización faltante o inválido';
-                    } else if (error.status === 403) {
-                        errorMessage = 'Permisos insuficientes para acceder a este recurso';
-                    } else if (error.status === 400) {
-                        errorMessage = 'Parámetros de consulta inválidos';
-                    }
+                    const errorMessage = error.error?.message || 'Error al cargar usuarios';
 
                     this._users.next([]);
                     this._pagination.next({
@@ -216,18 +204,7 @@ export class UserManagementService {
         return this._httpClient.get<UserResponse>(`${this.apiUrl}/users/${id}`)
             .pipe(
                 catchError((error) => {
-                    console.error('Error getting user by ID:', error);
-                    let errorMessage = 'Error al obtener usuario';
-
-                    if (error.status === 400) {
-                        errorMessage = 'ID de usuario inválido';
-                    } else if (error.status === 404) {
-                        errorMessage = 'Usuario no encontrado';
-                    } else if (error.status === 401) {
-                        errorMessage = 'Token faltante o inválido';
-                    } else if (error.status === 403) {
-                        errorMessage = 'Permisos insuficientes';
-                    }
+                    const errorMessage = error.error?.message || 'Error al obtener usuario';
 
                     return throwError(() => ({ ...error, message: errorMessage }));
                 })
@@ -241,18 +218,7 @@ export class UserManagementService {
         return this._httpClient.post<CreateUserResponse>(`${this.apiUrl}/users`, userData)
             .pipe(
                 catchError((error) => {
-                    console.error('Error creating user:', error);
-                    let errorMessage = 'Error al crear usuario';
-
-                    if (error.status === 400) {
-                        errorMessage = error.error?.message || 'Datos de entrada inválidos';
-                    } else if (error.status === 409) {
-                        errorMessage = 'El usuario ya existe con este email';
-                    } else if (error.status === 401) {
-                        errorMessage = 'Token faltante o inválido';
-                    } else if (error.status === 403) {
-                        errorMessage = 'Permisos insuficientes';
-                    }
+                    const errorMessage = error.error?.message || 'Error al crear usuario';
 
                     return throwError(() => ({ ...error, message: errorMessage }));
                 })
@@ -266,20 +232,7 @@ export class UserManagementService {
         return this._httpClient.put<UpdateUserResponse>(`${this.apiUrl}/users/${id}`, userData)
             .pipe(
                 catchError((error) => {
-                    console.error('Error updating user:', error);
-                    let errorMessage = 'Error al actualizar usuario';
-
-                    if (error.status === 400) {
-                        errorMessage = error.error?.message || 'ID inválido o datos de entrada incorrectos';
-                    } else if (error.status === 404) {
-                        errorMessage = 'Usuario no encontrado';
-                    } else if (error.status === 409) {
-                        errorMessage = 'Email ya existe en el sistema';
-                    } else if (error.status === 401) {
-                        errorMessage = 'Token faltante o inválido';
-                    } else if (error.status === 403) {
-                        errorMessage = 'Permisos insuficientes';
-                    }
+                    const errorMessage = error.error?.message || 'Error al actualizar usuario';
 
                     return throwError(() => ({ ...error, message: errorMessage }));
                 })
@@ -293,18 +246,7 @@ export class UserManagementService {
         return this._httpClient.delete<DeleteUserResponse>(`${this.apiUrl}/users/${id}`)
             .pipe(
                 catchError((error) => {
-                    console.error('Error deleting user:', error);
-                    let errorMessage = 'Error al eliminar usuario';
-
-                    if (error.status === 400) {
-                        errorMessage = 'ID de usuario inválido';
-                    } else if (error.status === 404) {
-                        errorMessage = 'Usuario no encontrado';
-                    } else if (error.status === 401) {
-                        errorMessage = 'Token faltante o inválido';
-                    } else if (error.status === 403) {
-                        errorMessage = 'Permisos insuficientes';
-                    }
+                    const errorMessage = error.error?.message || 'Error al eliminar usuario';
 
                     return throwError(() => ({ ...error, message: errorMessage }));
                 })

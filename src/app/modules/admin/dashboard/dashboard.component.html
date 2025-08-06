@@ -1,0 +1,247 @@
+<div class="flex min-w-0 flex-auto flex-col">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card">
+        <div class="flex-1 min-w-0">
+            <!-- Welcome Message -->
+            <div class="flex items-center">
+                <div class="flex-shrink-0 h-12 w-12">
+                    <mat-icon
+                        class="icon-size-12 text-gray-400"
+                        [svgIcon]="'heroicons_solid:user-circle'">
+                    </mat-icon>
+                </div>
+                <div class="ml-4 flex flex-col">
+                    <div class="text-2xl font-semibold tracking-tight leading-8">¡Bienvenido de nuevo, Admin!</div>
+                    <div class="text-secondary font-medium">Tienes 0 nuevos mensajes y 0 nuevas tareas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading" class="flex-auto p-6 sm:p-10">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <mat-card *ngFor="let stat of stats" class="stats-card">
+                <mat-card-content class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <div class="text-3xl font-bold" [ngClass]="stat.color">{{ stat.value }}</div>
+                            <div class="text-sm text-secondary uppercase tracking-wide">{{ stat.subtitle }}</div>
+                            <div class="text-lg font-medium text-gray-900 dark:text-gray-100 mt-1">
+                                {{ stat.title }}
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                <mat-icon [svgIcon]="stat.icon" [class]="stat.color + ' icon-size-6'"></mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm text-secondary">
+                        <span *ngIf="stat.completed">Completado: <strong>{{ stat.completed }}</strong></span>
+                        <span *ngIf="stat.fromYesterday">Desde ayer: <strong>{{ stat.fromYesterday }}</strong></span>
+                        <span *ngIf="stat.closedToday">Cerrado hoy: <strong>{{ stat.closedToday }}</strong></span>
+                        <span *ngIf="stat.implemented">Implementado: <strong>{{ stat.implemented }}</strong></span>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- Charts and Tables Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- GitHub Issues Summary -->
+            <mat-card>
+                <mat-card-header class="pb-0">
+                    <mat-card-title class="text-lg font-semibold">Resumen de Incidencias GitHub</mat-card-title>
+                    <div class="ml-auto">
+                        <mat-tab-group>
+                            <mat-tab label="Esta Semana"></mat-tab>
+                            <mat-tab label="Semana Pasada"></mat-tab>
+                        </mat-tab-group>
+                    </div>
+                </mat-card-header>
+                <mat-card-content class="pt-4">
+                    <!-- Chart -->
+                    <div class="mb-6">
+                        <apx-chart
+                            [series]="issuesChartOptions.series"
+                            [chart]="issuesChartOptions.chart"
+                            [xaxis]="issuesChartOptions.xaxis"
+                            [yaxis]="issuesChartOptions.yaxis"
+                            [colors]="issuesChartOptions.colors"
+                            [stroke]="issuesChartOptions.stroke"
+                            [grid]="issuesChartOptions.grid">
+                        </apx-chart>
+                    </div>
+
+                    <!-- Overview Stats -->
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">{{ newIssues }}</div>
+                            <div class="text-sm text-secondary">Nuevas Incidencias</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">{{ closedIssues }}</div>
+                            <div class="text-sm text-secondary">Cerradas</div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="grid grid-cols-4 gap-2 mt-6">
+                        <div class="text-center">
+                            <div class="text-xl font-semibold">{{ issueMetrics.fixed }}</div>
+                            <div class="text-xs text-secondary">Arreglado</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl font-semibold">{{ issueMetrics.wontFix }}</div>
+                            <div class="text-xs text-secondary">No se Arreglará</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl font-semibold">{{ issueMetrics.reopened }}</div>
+                            <div class="text-xs text-secondary">Reabierto</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl font-semibold">{{ issueMetrics.needsTriage }}</div>
+                            <div class="text-xs text-secondary">Necesita Clasificación</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Task Distribution -->
+            <mat-card>
+                <mat-card-header class="pb-0">
+                    <mat-card-title class="text-lg font-semibold">Distribución de Tareas</mat-card-title>
+                    <div class="ml-auto">
+                        <mat-tab-group>
+                            <mat-tab label="Esta Semana"></mat-tab>
+                            <mat-tab label="Semana Pasada"></mat-tab>
+                        </mat-tab-group>
+                    </div>
+                </mat-card-header>
+                <mat-card-content class="pt-4">
+                    <!-- Donut Chart -->
+                    <div class="flex justify-center mb-6">
+                        <apx-chart
+                            [series]="taskDistributionChartOptions.series"
+                            [chart]="taskDistributionChartOptions.chart"
+                            [labels]="taskDistributionChartOptions.labels"
+                            [colors]="taskDistributionChartOptions.colors"
+                            [legend]="taskDistributionChartOptions.legend"
+                            [plotOptions]="taskDistributionChartOptions.plotOptions"
+                            [dataLabels]="taskDistributionChartOptions.dataLabels">
+                        </apx-chart>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                            <span class="text-sm">En progreso (40%)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                            <span class="text-sm">Completadas (30%)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                            <span class="text-sm">Pendientes (20%)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                            <span class="text-sm">Canceladas (10%)</span>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- Bottom Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Recent Tasks -->
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="text-lg font-semibold">Tareas Recientes</mat-card-title>
+                    <button mat-icon-button [matMenuTriggerFor]="tasksMenu" class="ml-auto">
+                        <mat-icon [svgIcon]="'heroicons_outline:ellipsis-vertical'"></mat-icon>
+                    </button>
+                    <mat-menu #tasksMenu="matMenu">
+                        <button mat-menu-item>Ver todas</button>
+                        <button mat-menu-item>Crear nueva</button>
+                        <button mat-menu-item>Exportar</button>
+                    </mat-menu>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="space-y-4">
+                        <div *ngFor="let task of recentTasks" class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-900 dark:text-gray-100">{{ task.title }}</div>
+                                <div class="text-sm text-secondary">Vence: {{ task.dueDate }}</div>
+                            </div>
+                            <div class="flex space-x-2 ml-4">
+                                <mat-chip class="text-xs" [ngClass]="getStatusClass(task.status)">
+                                    {{ task.status }}
+                                </mat-chip>
+                                <mat-chip class="text-xs" [ngClass]="getPriorityClass(task.priority)">
+                                    {{ task.priority }}
+                                </mat-chip>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <button mat-stroked-button>
+                            Ver todas las tareas
+                        </button>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- Schedule -->
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title class="text-lg font-semibold">Agenda</mat-card-title>
+                    <div class="ml-auto flex space-x-2">
+                        <button mat-button [color]="'primary'" class="text-sm">Hoy</button>
+                        <button mat-button class="text-sm">Mañana</button>
+                    </div>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="space-y-4">
+                        <div *ngFor="let item of scheduleItems" class="flex items-start space-x-3 p-3 border rounded-lg">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 rounded-full bg-primary"></div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium text-gray-900 dark:text-gray-100">{{ item.title }}</div>
+                                <div class="text-sm text-secondary flex items-center space-x-1">
+                                    <mat-icon [svgIcon]="'heroicons_outline:clock'" class="icon-size-4"></mat-icon>
+                                    <span>{{ item.time }}</span>
+                                </div>
+                                <div *ngIf="item.location" class="text-sm text-secondary flex items-center space-x-1 mt-1">
+                                    <mat-icon [svgIcon]="'heroicons_outline:map-pin'" class="icon-size-4"></mat-icon>
+                                    <span>{{ item.location }}</span>
+                                </div>
+                            </div>
+                            <button mat-icon-button class="flex-shrink-0">
+                                <mat-icon [svgIcon]="'heroicons_outline:chevron-right'" class="icon-size-4"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <button mat-stroked-button>
+                            Ver agenda completa
+                        </button>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>
